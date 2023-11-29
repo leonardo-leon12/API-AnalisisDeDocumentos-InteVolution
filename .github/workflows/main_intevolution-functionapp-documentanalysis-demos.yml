@@ -53,4 +53,4 @@ jobs:
           app-name: 'InteVolution-FunctionApp-DocumentAnalysis-Demos'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_92734E18981E49E2A2D4E05DC4C55FA5 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6E024014E8B846FB89435FB30BF77AD2 }}
