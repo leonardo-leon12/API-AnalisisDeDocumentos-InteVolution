@@ -52,13 +52,6 @@
         <img class="separador" src="/src/img/separador.svg" alt="hero" />
         <form id="form">
             <label>Análisis de Documentos oficiales</label>
-            <!-- <div>
-                <f2>Tipo de documento:</f2>
-                <select name="documentType" id="documentType">
-                    <option value="credencial">Identificación Oficial</option>
-                </select>
-            </div>
-            <br /> -->
             <div>
                 <f2>Ingresa un documento:</f2>
                 <input type="file" name="image" id="file" accept=".png, .jpg, .jpeg, .pdf" />
@@ -67,6 +60,7 @@
                     <div class="spinner-border text-primary" role="status">
                         <span class="sr-only">Loading...</span>
                     </div>
+                    <span>Procesando archivo...</span>
                 </div>
                 <div hidden id="error">
                     <span>Error al consultar el servicio</span>
@@ -75,6 +69,15 @@
         </form>
         <div class="table-container">
             <label>Resultado</label>
+            <span for="resultType">Tipo de respuesta:</span>
+            <select name="resultType" id="resultType">
+                <option value="table">Tabla</option>
+                <option value="JSON">JSON</option>
+            </select>
+            <div class="d-flex">
+                <span>Documento detectado:&nbsp;</span>
+                <h5 id="documentType"></h5>
+            </div>
             <table class="table table-bordered table-responsive">
                 <tr id="table-headers" class="bg-primary"></tr>
                 <tbody class="table-hover" id="table-result"></tbody>

@@ -4,18 +4,19 @@ const $loader = document.querySelector("#loader");
 const $tableResult = document.querySelector("#table-result");
 const $error = document.querySelector("#error");
 const $tableHeaders = document.querySelector("#table-headers");
+const $documentType = document.querySelector("#documentType");
+const selectElement = document.getElementById("resultType");
+const tableContainer = document.querySelector(".table");
+const jsonResultContainer = document.querySelector(".json-result-container");
 
 function renderResult(result) {
-    console.log("renderResult :>> ", result);
     document.getElementById("result").innerHTML = JSON.stringify(result, null, 2);
     const dataTableRow = document.createElement("tr");
     if (typeof result === "object") {
         const keys = Object.keys(result);
         for (let i = 0; i < keys.length; i++) {
             const data = keys[i];
-            console.log("data :>> ", data);
             const documentData = result[data];
-            console.log("documentData :>> ", documentData);
             const tdValue = document.createElement("td");
             tdValue.textContent = documentData;
             tdValue.id = data;
@@ -26,6 +27,19 @@ function renderResult(result) {
         }
     }
 }
+
+window.onload = function () {
+    $form.querySelector("#file").value = "";
+    $result.innerHTML = "";
+    $tableResult.innerHTML = "";
+    $tableHeaders.innerHTML = "";
+    $documentType.innerHTML = "";
+    $error.setAttribute("hidden", "");
+    $loader.setAttribute("hidden", "");
+    selectElement.value = "table";
+    tableContainer.style.display = "block";
+    jsonResultContainer.style.display = "none";
+};
 
 function createTableHeader(tableHeaderData) {
     const dataTableHeader = document.createElement("th");
@@ -96,6 +110,22 @@ function translateDocumentAtributes(data) {
     }
 }
 
+// Add event listener for the 'change' event
+selectElement.addEventListener("change", () => handleSelectChange(selectElement.value));
+
+function handleSelectChange(targetValue) {
+    // Check the current value of the select element
+    if (targetValue === "table") {
+        // Show the table container and hide the JSON result container
+        tableContainer.style.display = "block";
+        jsonResultContainer.style.display = "none";
+    } else if (targetValue === "JSON") {
+        // Hide the table container and show the JSON result container
+        tableContainer.style.display = "none";
+        jsonResultContainer.style.display = "block";
+    }
+}
+
 async function sendDocumentAnalysis(event) {
     event.preventDefault();
 
@@ -105,6 +135,8 @@ async function sendDocumentAnalysis(event) {
         $error.setAttribute("hidden", "");
         $tableResult.innerHTML = "";
         $tableHeaders.innerHTML = "";
+        $result.innerHTML = "";
+        selectElement.value = "table";
 
         let axiosObj = {
             url: "https://intevolution-functionapp-documentanalysis.azurewebsites.net/api/DocumentAnalysis?code=Uq0uqJgSRKYf3KWnIsX6qcJjbkHze_qgtRZUtsAQZsDvAzFu7qUNaA==",
@@ -116,85 +148,100 @@ async function sendDocumentAnalysis(event) {
             data: formData,
         };
         let res = await axios(axiosObj);
-        console.log("res :>> ", res);
         let responseCode = res?.data?.code ? parseInt(res.data.code) : 99; //Si no hay un código de respuesta lo mandamos al default
         $loader.setAttribute("hidden", "");
+
+        if (responseCode !== 0) {
+            selectElement.value = "JSON";
+            handleSelectChange("JSON");
+        }
         switch (responseCode) {
             case 0:
                 let documentContent = res.data.document;
+                let documentType = res.data.documentType;
+                $documentType.textContent = documentType;
+                selectElement.value = "table";
+                handleSelectChange("table");
+
                 renderResult(documentContent);
                 return documentContent;
             case 1:
-                renderResult("El documento enviado no es un documento oficial");
+                renderResult(
+                    "Lo siento, pero el documento que enviaste no es un documento oficial."
+                );
                 break;
             case 2:
                 renderResult(
-                    "El tipo de contenido es incorrecto, solo se admiten los formatos png, jpg, jpeg y pdf"
+                    "¡Ups! El tipo de contenido es incorrecto. Solo se aceptan formatos png, jpg, jpeg y pdf."
                 );
                 break;
             case 3:
-                renderResult("No se ha enviado ningún documento");
+                renderResult("No se ha enviado ningún documento. Por favor, carga un documento.");
                 break;
             case 4:
-                renderResult("El tipo de contenido es incorrecto");
+                renderResult("¡Ups! El tipo de contenido es incorrecto.");
                 break;
             case 5:
-                renderResult("El formato de petición es incorrecto");
+                renderResult("¡Ups! El formato de la solicitud es incorrecto.");
                 break;
             case 6:
-                renderResult("La petición no está autorizada");
+                renderResult("Lo siento, pero la solicitud no está autorizada.");
                 break;
             case 7:
-                renderResult("Ocurrió un error inesperado, inténtelo más tarde");
+                renderResult(
+                    "¡Ups! Ocurrió un error inesperado. Por favor, inténtalo de nuevo más tarde."
+                );
                 break;
             case 8:
-                renderResult("El documento enviado es ilegible");
+                renderResult("El documento que enviaste es ilegible.");
                 break;
             case 9:
-                renderResult("El documento enviado presenta zonas muy brillantes");
+                renderResult("El documento que enviaste tiene áreas muy brillantes.");
                 break;
             case 10:
-                renderResult("El documento enviado no es oficial");
+                renderResult("¡Ups! El documento que enviaste no es un documento oficial.");
                 break;
             case 11:
-                renderResult("El documento tiene poca iluminación");
+                renderResult("El documento tiene poca iluminación.");
                 break;
             case 12:
-                renderResult("El documento enviado presenta zonas oscuras");
+                renderResult("El documento que enviaste tiene áreas oscuras.");
                 break;
             case 13:
-                renderResult("El documento enviado no se encuentra centrado");
+                renderResult("El documento que enviaste no está centrado.");
                 break;
             case 14:
-                renderResult("El documento enviado no debe estar incompleto o recortado");
+                renderResult("El documento que enviaste no debe estar incompleto o recortado.");
                 break;
             case 15:
                 renderResult(
-                    "El fondo del documento debe ser claro y no debe interferir con el contenido"
+                    "El fondo del documento debe estar claro y no debe interferir con el contenido."
                 );
                 break;
             case 16:
-                renderResult("El ángulo del documento enviado no permite visualizar el contenido");
+                renderResult("El ángulo del documento que enviaste no permite ver el contenido.");
                 break;
             case 17:
-                renderResult("El documento enviado presenta daños");
+                renderResult("El documento que enviaste tiene daños.");
                 break;
             case 18:
-                renderResult("El documento enviado es demasiado grande");
+                renderResult("El documento que enviaste es demasiado grande.");
                 break;
             case 19:
-                renderResult("El documento enviado no es una credencial vigente");
+                renderResult("El documento que enviaste no es una credencial válida.");
                 break;
             case 20:
-                renderResult("No se logró obtener la fecha de vigencia");
+                renderResult("No se pudo obtener la fecha de vencimiento.");
                 break;
             case 21:
                 renderResult(
-                    "No se lograron obtener los datos. Por favor, inténtalo nuevamente con una imagen diferente"
+                    "No se pudo obtener los datos. Por favor, intenta de nuevo con una imagen diferente."
                 );
                 break;
             default:
-                renderResult("Ocurrió un error en la petición, inténtelo más tarde");
+                renderResult(
+                    "¡Ups! Ocurrió un error en la solicitud. Por favor, inténtalo de nuevo más tarde."
+                );
                 break;
         }
     } catch (error) {

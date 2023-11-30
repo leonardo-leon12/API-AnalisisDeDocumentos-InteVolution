@@ -91,6 +91,15 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
+}
+
+.table-container {
+    display: block;
+}
+
+.json-result-container {
+    display: none;
 }
 
 .text-primary {
