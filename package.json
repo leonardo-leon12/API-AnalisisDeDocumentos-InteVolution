@@ -1,0 +1,19 @@
+{
+  "name": "portal-analisis-documentos",
+  "version": "1.0.0",
+  "description": "portal for testing api of OCR for documents located in mexico",
+  "main": "index.html",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leonardo-leon12/API-AnalisisDeDocumentos-InteVolution.git"
+  },
+  "author": "leonardo-leon12",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/leonardo-leon12/API-AnalisisDeDocumentos-InteVolution/issues"
+  },
+  "homepage": "https://github.com/leonardo-leon12/API-AnalisisDeDocumentos-InteVolution#readme"
+}
