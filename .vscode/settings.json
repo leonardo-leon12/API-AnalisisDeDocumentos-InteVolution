@@ -1,4 +1,0 @@
-{
-    "appService.defaultWebAppToDeploy": "/subscriptions/5364c6bd-ef8a-4c9b-aa7c-c6258fd0b693/resourceGroups/InteVolution-API-DocumentAnalysis/providers/Microsoft.Web/sites/DocumentAnalysis-Portal-Testing",
-    "appService.deploySubpath": "."
-}
