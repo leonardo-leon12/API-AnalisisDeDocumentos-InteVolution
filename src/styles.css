@@ -34,6 +34,16 @@ label {
     box-shadow: 0 3px 2px -2px var(--shadowColor);
 }
 
+p {
+    text-align: center;
+    display: block;
+    padding-bottom: 1em;
+    margin-bottom: 1em;
+    font-size: 2em;
+    font-weight: bold;
+    box-shadow: 0 3px 2px -2px var(--shadowColor);
+}
+
 input {
     width: 100%;
     border-radius: 5px;
