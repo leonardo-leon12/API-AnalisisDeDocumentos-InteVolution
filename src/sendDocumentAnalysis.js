@@ -45,6 +45,10 @@ const APIColumns = [
     { key: "deteccion_numero", value: "Detección número" },
 ];
 
+console.log("process.env", process.env);
+console.log("DOCUMENT_ANALISYS_AUTHORIZATION", process.env.DOCUMENT_ANALISYS_AUTHORIZATION);
+console.log("READ_WRITTEN_NUMBERS_API_KEY", process.env.READ_WRITTEN_NUMBERS_API_KEY);
+
 function renderResult(result) {
     document.getElementById("result").innerHTML = JSON.stringify(result, null, 2);
     const dataTableRow = document.createElement("tr");
