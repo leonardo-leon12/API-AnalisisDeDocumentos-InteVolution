@@ -45,10 +45,6 @@ const APIColumns = [
     { key: "deteccion_numero", value: "Detección número" },
 ];
 
-console.log("process.env", process.env);
-console.log("DOCUMENT_ANALISYS_AUTHORIZATION", process.env.DOCUMENT_ANALISYS_AUTHORIZATION);
-console.log("READ_WRITTEN_NUMBERS_API_KEY", process.env.READ_WRITTEN_NUMBERS_API_KEY);
-
 function renderResult(result) {
     document.getElementById("result").innerHTML = JSON.stringify(result, null, 2);
     const dataTableRow = document.createElement("tr");
@@ -251,18 +247,18 @@ async function sendDocumentAnalysis(event) {
                     base64String = reader.result;
                     $loader.setAttribute("hidden", "");
                     let data = {
-                        imagen_base64: "base64String",
+                        imagen_base64: base64String.split(",")[1],
                     };
                     let axiosObjNumber = {
                         url: "https://intevolution-appfunction-apida.azurewebsites.net/api/readWrittenNumbers?code=27ZUFEp0dQQXNDP5Izo7dHDLgBnU-o7CmQV50XLoUUgDAzFuC8Tt5g==",
                         method: "POST",
                         timeout: 3000000, //5 minutos
                         headers: {
+                            "Content-Type": "application/json",
                             "API-Key": "INE2024",
-                            "Content-Type": "application/octet-stream",
                         },
-                        data: file,
-                        //data: data,
+                        //data: file,
+                        data: data,
                     };
                     let resNumber = await axios(axiosObjNumber);
                     responseCode = responseCode = resNumber?.data?.response?.code
