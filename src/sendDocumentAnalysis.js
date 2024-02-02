@@ -131,7 +131,7 @@ async function sendDocumentAnalysis(event) {
                     method: "POST",
                     timeout: 3000000, //5 minutos
                     headers: {
-                        Authorization: "c0vcx34u5yuqpg5ek24nx9iynicapdyh",
+                        Authorization: "6xd5k51tfbdqzxubtd60bxxbmfp5tw02",
                     },
                     data: formData,
                 };
@@ -145,6 +145,8 @@ async function sendDocumentAnalysis(event) {
                 }
                 switch (responseCode) {
                     case 0:
+                        let documentContent = null;
+                        let documentType = null;
                         if (serviceType.value === "document") {
                             documentContent = res.data.document;
                             documentType = res.data.documentType;
@@ -254,11 +256,11 @@ async function sendDocumentAnalysis(event) {
                         method: "POST",
                         timeout: 3000000, //5 minutos
                         headers: {
-                            "Content-Type": "application/json",
-                            "API-Key": "INE2024",
+                            "Content-Type": "application/octet-stream",
+                            Authorization: "6xd5k51tfbdqzxubtd60bxxbmfp5tw02",
                         },
-                        //data: file,
-                        data: data,
+                        data: file,
+                        //data: data,
                     };
                     let resNumber = await axios(axiosObjNumber);
                     responseCode = responseCode = resNumber?.data?.response?.code
