@@ -74,6 +74,9 @@ const CreateAudioTable = () => {
             method: "POST",
             url: "https://intevolution-functionapp-conversationsdemo.azurewebsites.net/api/ConversationAnalysis?code=Wn0fRQc9zB4TGBQeL5iPX9lNSs7GeSG0ZsArGicTsURRAzFulmXolQ==&type=ProcessConversation",
             data: data,
+            headers: {
+                Authorization: "k1rz0adcf8dvtb326mxm11nqem2x366y",
+            },
         });
         //hide loading modal
         loadingModal.classList.add("d-none");
@@ -174,6 +177,9 @@ const CreateAudioTable = () => {
             method: "POST",
             url: "https://intevolution-functionapp-conversationsdemo.azurewebsites.net/api/ConversationAnalysis?code=Wn0fRQc9zB4TGBQeL5iPX9lNSs7GeSG0ZsArGicTsURRAzFulmXolQ==&type=Status",
             data: JSON.stringify(data, null, 2),
+            headers: {
+                Authorization: "k1rz0adcf8dvtb326mxm11nqem2x366y",
+            },
         });
         let status = res.data.status;
         processingStatusContainer.innerHTML = getStatusTranslation(status);
