@@ -181,7 +181,7 @@ const CreateAudioTable = () => {
             let ListConversations = res.data.response.conversations
                 .filter((audio) => audio.url)
                 .sort((a, b) => {
-                    return b.processed - a.processed;
+                    return a.processed - b.processed;
                 });
             let audioURList = ListConversations.map((audio) => audio.url);
             let audioURLObjectList = await LazyLoadAudios(audioURList);

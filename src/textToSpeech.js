@@ -392,8 +392,6 @@ async function saveAudioToBlob() {
 
         // Close loading modal
         Swal.close();
-        console.log("res", res);
-
         let responseCode = res.data.response.code;
 
         switch (responseCode) {
