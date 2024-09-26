@@ -74,9 +74,6 @@ const CreateAudioTable = () => {
             method: "POST",
             url: "https://intevolution-functionapp-conversationsdemo.azurewebsites.net/api/ConversationAnalysis?code=Wn0fRQc9zB4TGBQeL5iPX9lNSs7GeSG0ZsArGicTsURRAzFulmXolQ==&type=ProcessConversation",
             data: data,
-            headers: {
-                Authorization: "k1rz0adcf8dvtb326mxm11nqem2x366y",
-            },
         });
         //hide loading modal
         loadingModal.classList.add("d-none");
@@ -107,6 +104,20 @@ const CreateAudioTable = () => {
     }
 
     const clearProcessedAudios = async () => {
+        //Ask confirmation
+        let askConfirm = await Swal.fire({
+            title: "¿Estás seguro de que deseas eliminar el procesamiento?",
+            showDenyButton: true,
+            confirmButtonText: "Si",
+            denyButtonText: `No`,
+            confirmButtonColor: "#27315d",
+            denyButtonColor: "#27315d",
+        });
+        //Cancelamos el guardado de cambios
+        if (askConfirm.isDenied || askConfirm.isDismissed) {
+            return;
+        }
+
         setLoading(true);
         let res = await axios({
             method: "GET",
@@ -138,34 +149,54 @@ const CreateAudioTable = () => {
         let audioURLObjectList = [];
         for (let index = 0; index < audioURList.length; index++) {
             const audioURL = audioURList[index];
-            let res = await axios({
-                method: "GET",
-                url: audioURL,
-                responseType: "blob", // or 'blob'
-            });
-            let audioBlob = res.data;
-            let audioURLObject = URL.createObjectURL(audioBlob);
-            audioURLObjectList[index] = audioURLObject;
+            if (!audioURL) {
+                audioURLObjectList[index] = null;
+                continue;
+            }
+
+            try {
+                let res = await axios({
+                    method: "GET",
+                    url: audioURL,
+                    responseType: "blob", // or 'blob'
+                });
+                let audioBlob = res.data;
+                let audioURLObject = URL.createObjectURL(audioBlob);
+                audioURLObjectList[index] = audioURLObject;
+            } catch (error) {
+                console.error(`Error loading audio from ${audioURL}:`, error);
+                audioURLObjectList[index] = null;
+            }
         }
         return audioURLObjectList;
     };
 
     const getConversations = async () => {
-        setLoading(true);
-        let res = await axios({
-            method: "GET",
-            url: "https://intevolution-functionapp-conversationsdemo.azurewebsites.net/api/ConversationAnalysis?code=Wn0fRQc9zB4TGBQeL5iPX9lNSs7GeSG0ZsArGicTsURRAzFulmXolQ==&type=ListConversations",
-        });
-        let ListConversations = res.data.response.conversations
-            .filter((audio) => audio.url)
-            .sort((a, b) => {
-                return b.processed - a.processed;
+        try {
+            setLoading(true);
+            let res = await axios({
+                method: "GET",
+                url: "https://intevolution-functionapp-conversationsdemo.azurewebsites.net/api/ConversationAnalysis?code=Wn0fRQc9zB4TGBQeL5iPX9lNSs7GeSG0ZsArGicTsURRAzFulmXolQ==&type=ListConversations",
             });
-        let audioURList = ListConversations.map((audio) => audio.url);
-        let audioURLObjectList = await LazyLoadAudios(audioURList);
-        setAudioURLObjectList(audioURLObjectList);
-        setAudioList(ListConversations);
-        setLoading(false);
+            let ListConversations = res.data.response.conversations
+                .filter((audio) => audio.url)
+                .sort((a, b) => {
+                    return b.processed - a.processed;
+                });
+            let audioURList = ListConversations.map((audio) => audio.url);
+            let audioURLObjectList = await LazyLoadAudios(audioURList);
+            setAudioURLObjectList(audioURLObjectList);
+            setAudioList(ListConversations);
+        } catch (error) {
+            console.error("Error fetching conversations:", error);
+            Swal.fire({
+                title: "Error!",
+                text: "Ha ocurrido un error al obtener las conversaciones.",
+                icon: "error",
+            });
+        } finally {
+            setLoading(false);
+        }
     };
 
     const getProcessingStatus = async (processingId) => {
@@ -177,9 +208,6 @@ const CreateAudioTable = () => {
             method: "POST",
             url: "https://intevolution-functionapp-conversationsdemo.azurewebsites.net/api/ConversationAnalysis?code=Wn0fRQc9zB4TGBQeL5iPX9lNSs7GeSG0ZsArGicTsURRAzFulmXolQ==&type=Status",
             data: JSON.stringify(data, null, 2),
-            headers: {
-                Authorization: "k1rz0adcf8dvtb326mxm11nqem2x366y",
-            },
         });
         let status = res.data.status;
         processingStatusContainer.innerHTML = getStatusTranslation(status);
@@ -276,6 +304,7 @@ const CreateAudioTable = () => {
                             <th>Escuchar audio</th>
                             <th>Descargar audio </th>
                             <th>Procesado</th>
+                            <th>Transcripción</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -345,6 +374,21 @@ const CreateAudioTable = () => {
                                             do_not_disturb_on
                                         </span>
                                     )}
+                                </td>
+                                <td>
+                                    <button
+                                        class="refresh-button"
+                                        type="button"
+                                        data-toggle="collapse"
+                                        data-target={`#trasncription-${index}`}
+                                        aria-expanded="false"
+                                        aria-controls="collapseExample"
+                                    >
+                                        Mostrar Transcripción
+                                    </button>
+                                    <div class="collapse" id={`trasncription-${index}`}>
+                                        <div class="card card-body">{audio.transcription}</div>
+                                    </div>
                                 </td>
                             </tr>
                         ))}
