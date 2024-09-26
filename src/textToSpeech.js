@@ -392,10 +392,37 @@ async function saveAudioToBlob() {
 
         // Close loading modal
         Swal.close();
+        console.log("res", res);
 
-        //Click refresh button
-        document.getElementById("btnRefreshAudio").click();
+        let responseCode = res.data.response.code;
+
+        switch (responseCode) {
+            case "00":
+                Swal.fire({
+                    icon: "success",
+                    title: "¡Guardado exitoso!",
+                    text: "El audio ha sido guardado correctamente.",
+                });
+
+                //Click refresh button
+                document.getElementById("btnRefreshAudio").click();
+                break;
+
+            default:
+                Swal.fire({
+                    icon: "error",
+                    title: "No se pudo conectar al servicio",
+                    text: "Ha ocurrido un error al guardar el audio.",
+                });
+
+                break;
+        }
     } catch (error) {
+        Swal.fire({
+            icon: "error",
+            title: "No se pudo conectar al servicio",
+            text: "Ha ocurrido un error al guardar el audio.",
+        });
         console.error("Error saving audio to blob:", error);
     }
 }
