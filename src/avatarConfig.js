@@ -5,7 +5,7 @@ export const avatarConfig = {
     avatarList: [
         {
             name: "Bryan",
-            avatarId:"Bryan_FitnessCoach_public",
+            avatarId: "Bryan_FitnessCoach_public",
         },
     ],
     voiceList: [
@@ -14,18 +14,18 @@ export const avatarConfig = {
             voiceId: "c9c79b70d62e4d2ba3e5c680ba367b90",
         },
         {
-            name:"Lopez Doriga",
+            name: "Lopez Doriga",
             voiceId: "b2ee885dd2cf42baa015ae50433c672b",
         },
         {
             name: "Perro Bermudez",
             voiceId: "9dcc0187c94c4b2daf7484aed29b4bee",
-        }
+        },
     ],
     KbList: [
         {
-            name:"Banco",
-            kbId: "553b471dd6d448eaa46351c122d71a7a",
-        }
-    ]
-}
+            name: "Financiera",
+            kbId: "9c68454c1a354675a9c642ce120b886f",
+        },
+    ],
+};
