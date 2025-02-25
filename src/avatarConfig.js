@@ -25,6 +25,10 @@ export const avatarConfig = {
             name: "Perro Bermudez",
             voiceId: "9dcc0187c94c4b2daf7484aed29b4bee",
         },
+        {
+            name: "Paola Rojas",
+            voiceId: "0a916fc31db84617af7ebb0ae52eb844",
+        },
     ],
     KbList: [
         {
