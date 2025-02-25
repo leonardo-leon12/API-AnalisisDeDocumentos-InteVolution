@@ -7,6 +7,10 @@ export const avatarConfig = {
             name: "Bryan",
             avatarId: "Bryan_FitnessCoach_public",
         },
+        {
+            name: "Marco",
+            avatarId: "Silas_CustomerSupport_public",
+        },
     ],
     voiceList: [
         {
