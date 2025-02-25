@@ -47,6 +47,7 @@
     /* Stack vertically by default (mobile-first) */
     align-items: center;
     gap: 20px;
+    
 }
 
 /* On medium screens and larger, display side-by-side */
@@ -55,5 +56,19 @@
         flex-direction: row;
         justify-content: center;
         align-items: flex-start;
+        width: 1500px;
     }
+}
+
+/* Chatbot container: full width on small devices, up to 750px on larger ones */
+.chatbot-container {
+    margin-top: 10px;
+    width: 100%;
+    max-width: 750px;
+    box-sizing: border-box;
+}
+
+#modelDescription {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }

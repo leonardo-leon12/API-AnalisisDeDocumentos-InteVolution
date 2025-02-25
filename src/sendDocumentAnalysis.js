@@ -22,7 +22,10 @@ const APIColumns = [
     { key: "direccionResidencia", value: "Dirección de residencia" },
     { key: "municipioResidencia", value: "Municipio de residencia" },
     { key: "fechaEmisionDocumento", value: "Fecha de emisión del documento" },
-    { key: "fechaExpiracionDocumento", value: "Fecha de expiración del documento" },
+    {
+        key: "fechaExpiracionDocumento",
+        value: "Fecha de expiración del documento",
+    },
     { key: "curp", value: "CURP" },
     { key: "seccion", value: "Sección" },
     { key: "fechaRegistro", value: "Fecha de registro" },
@@ -46,7 +49,11 @@ const APIColumns = [
 ];
 
 function renderResult(result) {
-    document.getElementById("result").innerHTML = JSON.stringify(result, null, 2);
+    document.getElementById("result").innerHTML = JSON.stringify(
+        result,
+        null,
+        2
+    );
     const dataTableRow = document.createElement("tr");
     if (typeof result === "object") {
         const keys = Object.keys(result);
@@ -84,12 +91,15 @@ function createTableHeader(tableHeaderData) {
 }
 
 function translateDocumentAtributes(data) {
-    const translatedColumn = APIColumns.find((item) => item.key === data)?.value || "";
+    const translatedColumn =
+        APIColumns.find((item) => item.key === data)?.value || "";
     return translatedColumn;
 }
 
 // Add event listener for the 'change' event
-selectElement.addEventListener("change", () => handleSelectChange(selectElement.value));
+selectElement.addEventListener("change", () =>
+    handleSelectChange(selectElement.value)
+);
 
 function handleSelectChange(targetValue) {
     // Check the current value of the select element
@@ -174,13 +184,19 @@ async function sendDocumentAnalysis(event) {
                         );
                         break;
                     case 4:
-                        renderResult("¡Ups! El tipo de contenido es incorrecto.");
+                        renderResult(
+                            "¡Ups! El tipo de contenido es incorrecto."
+                        );
                         break;
                     case 5:
-                        renderResult("¡Ups! El formato de la solicitud es incorrecto.");
+                        renderResult(
+                            "¡Ups! El formato de la solicitud es incorrecto."
+                        );
                         break;
                     case 6:
-                        renderResult("Lo siento, pero la solicitud no está autorizada.");
+                        renderResult(
+                            "Lo siento, pero la solicitud no está autorizada."
+                        );
                         break;
                     case 7:
                         renderResult(
@@ -191,19 +207,27 @@ async function sendDocumentAnalysis(event) {
                         renderResult("El documento que enviaste es ilegible.");
                         break;
                     case 9:
-                        renderResult("El documento que enviaste tiene áreas muy brillantes.");
+                        renderResult(
+                            "El documento que enviaste tiene áreas muy brillantes."
+                        );
                         break;
                     case 10:
-                        renderResult("¡Ups! El documento que enviaste no es un documento oficial.");
+                        renderResult(
+                            "¡Ups! El documento que enviaste no es un documento oficial."
+                        );
                         break;
                     case 11:
                         renderResult("El documento tiene poca iluminación.");
                         break;
                     case 12:
-                        renderResult("El documento que enviaste tiene áreas oscuras.");
+                        renderResult(
+                            "El documento que enviaste tiene áreas oscuras."
+                        );
                         break;
                     case 13:
-                        renderResult("El documento que enviaste no está centrado.");
+                        renderResult(
+                            "El documento que enviaste no está centrado."
+                        );
                         break;
                     case 14:
                         renderResult(
@@ -224,13 +248,19 @@ async function sendDocumentAnalysis(event) {
                         renderResult("El documento que enviaste tiene daños.");
                         break;
                     case 18:
-                        renderResult("El documento que enviaste es demasiado grande.");
+                        renderResult(
+                            "El documento que enviaste es demasiado grande."
+                        );
                         break;
                     case 19:
-                        renderResult("El documento que enviaste no es una credencial válida.");
+                        renderResult(
+                            "El documento que enviaste no es una credencial válida."
+                        );
                         break;
                     case 20:
-                        renderResult("No se pudo obtener la fecha de vencimiento.");
+                        renderResult(
+                            "No se pudo obtener la fecha de vencimiento."
+                        );
                         break;
                     case 21:
                         renderResult(
@@ -263,7 +293,8 @@ async function sendDocumentAnalysis(event) {
                         //data: data,
                     };
                     let resNumber = await axios(axiosObjNumber);
-                    responseCode = responseCode = resNumber?.data?.response?.code
+                    responseCode = responseCode = resNumber?.data?.response
+                        ?.code
                         ? parseInt(resNumber.data.response?.code)
                         : 99; //Si no hay un código de respuesta lo mandamos al default
 
@@ -272,7 +303,8 @@ async function sendDocumentAnalysis(event) {
                             let documentContent = null;
                             let documentType = null;
                             if (serviceType.value === "writtenNumber") {
-                                documentContent = resNumber.data.response.data.datos[0];
+                                documentContent =
+                                    resNumber.data.response.data.datos[0];
                                 documentType = "Número escrito";
                                 $documentType.textContent = documentType;
                             }
@@ -298,7 +330,9 @@ async function sendDocumentAnalysis(event) {
         console.log("error :>> ", error);
         $loader.setAttribute("hidden", "");
         $error.removeAttribute("hidden");
-        renderResult("Ocurrió un error al analizar cargar la imagen, intentelo más tarde");
+        renderResult(
+            "Ocurrió un error al analizar cargar la imagen, intentelo más tarde"
+        );
     }
 }
 
