@@ -11,6 +11,10 @@ export const avatarConfig = {
             name: "Marco",
             avatarId: "Silas_CustomerSupport_public",
         },
+        {
+            name: "Maria",
+            avatarId: "June_HR_public",
+        },
     ],
     voiceList: [
         {
