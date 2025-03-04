@@ -29,7 +29,8 @@ resetButton.classList.add("disabled-button");
 
 try {
     // Check for the browser-specific implementations
-    window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    window.SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (!window.SpeechRecognition) {
         throw new Error("SpeechRecognition API not supported in this browser.");
@@ -155,7 +156,9 @@ try {
 async function startVisualizer() {
     try {
         // Get the user's microphone input
-        mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+        });
 
         // Create an AudioContext
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -190,7 +193,9 @@ async function startVisualizer() {
 
         mediaRecorder.onstop = function (e) {
             // Process recordedChunks to create Blob
-            let blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType });
+            let blob = new Blob(recordedChunks, {
+                type: mediaRecorder.mimeType,
+            });
 
             // Convert Blob to Base64
             let reader = new FileReader();
@@ -217,7 +222,9 @@ async function startVisualizer() {
         mediaRecorder.start();
     } catch (err) {
         console.error("Error accessing microphone for visualization:", err);
-        alert("Could not access the microphone. Please allow microphone access.");
+        alert(
+            "Could not access the microphone. Please allow microphone access."
+        );
     }
 }
 
@@ -355,7 +362,7 @@ async function saveAudioToBlob() {
                 .toLocaleString("en-GB")
                 .replace(",", "")
                 .replaceAll("/", "-")
-                .replaceAll(":", "-") + " DEMO Análisis de conversaciones.webm";
+                .replaceAll(":", "-") + " DEMO Conversation Studio.webm";
         let data = {
             audio: audioBase64,
             type: "audio/webm",
