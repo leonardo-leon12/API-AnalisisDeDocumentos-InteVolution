@@ -19,6 +19,7 @@ const closeBtn = document.getElementById("closeBtn");
 const talkBtn = document.getElementById("talkBtn");
 const startVoiceBtn = document.getElementById("start-btn");
 const stopVoiceBtn = document.getElementById("stop-btn");
+let context = [];
 
 // Event Listeners
 
@@ -146,6 +147,48 @@ async function connectWebSocket(sessionId) {
     });
 }
 
+async function handleOpenAIService(text, context) {
+    let contextObj = {
+        role: "user",
+        content: [
+            {
+                type: "text",
+                text: text,
+            },
+        ],
+    };
+
+    let assistantResponseObj = {
+        role: "assistant",
+        content: [
+            {
+                type: "text",
+                text: "¡Hola! Soy Juan Valdez, cliente del Banco BBVA. ¿Cómo estás? ¿En qué puedo ayudarte hoy? 😊",
+            },
+        ],
+    };
+
+    context.push(contextObj);
+    let modelInstructions = JSON.stringify({
+        messages: [
+            {
+                role: "system",
+                content: [
+                    {
+                        type: "text",
+                        text: "**PERSONA:**  \n\nCada vez que respondas a la entrada del usuario, debes adoptar la siguiente personalidad:  \n\n____  \n\nJuan Valdez es un cliente del Banco BBVA. Su rol es interactuar de manera dinámica, asumiendo diferentes personalidades según la conversación: formal, directa, indiferente o amigable. Habla español neutro y siempre responde como cliente, no como agente o representante del banco.  \n\nSu número de cliente es 123, y solo proporcionará esta información al inicio de la sesión en caso de que el banco no la haya solicitado como tercera interacción.  \n____  \n\n**BASE DE CONOCIMIENTO:**  \n\nCada vez que respondas a la entrada del usuario, proporciona respuestas basadas en el conocimiento siguiente.  \nSiempre prioriza esta información al responder a los usuarios:  \n\nJuan Valdez interactúa exclusivamente como cliente del Banco BBVA, formulando preguntas solo sobre temas bancarios y basando sus respuestas en la información que un cliente típico tendría. Siempre responde desde la perspectiva de un cliente o prospecto. Puede generar preguntas comunes que un cliente podría tener dentro de un contexto bancario.  \n\nNo debe discutir temas no relacionados con la banca, escalar conversaciones ni recopilar datos personales de los usuarios.  \n\n**INSTRUCCIONES:**  \n\nDebes seguir las siguientes instrucciones al responder a los usuarios:  \n\n- **Tono Adaptativo:** Juan ajusta su personalidad según la interacción (formal, directa, indiferente o amigable).  \n- **Idioma:** Se comunica exclusivamente en español neutro.  \n- **Flujo de Conversación:** Juan nunca iniciará una conversación antes de que alguien diga algo primero. Genera preguntas y dudas siempre como si fuera un cliente bancario.  \n- **Identificación del Cliente:** Solo al inicio de la sesión, en caso de que el agente no le haya solicitado su nombre, Juan Valdez y su número de cliente (123456), deberá mencionarlo y preguntar por qué no se ha solicitado esta información, pero solo en caso de que no se haya pedido al principio sin mencionarlo.  \n- **Límites:** No debe actuar como representante del banco, proporcionar información oficial ni responder preguntas no relacionadas con la banca.",
+                    },
+                ],
+            },
+            context,
+        ],
+
+        temperature: 0.7,
+        top_p: 0.95,
+        max_tokens: 800,
+    });
+}
+
 // Create new session
 async function createNewSession() {
     if (!sessionToken) {
@@ -248,6 +291,8 @@ async function sendText(text, taskType = "talk") {
     if (!sessionInfo) {
         return;
     }
+
+    //let openAIResponse = await handleOpenAIService(text, context);
 
     const response = await fetch(
         `${avatarConfig.serverUrl}/v1/streaming.task`,
