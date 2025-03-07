@@ -20,6 +20,10 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            rel="stylesheet"
+        />
+        <link
             href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
             rel="stylesheet"
         />
@@ -58,132 +62,141 @@
         <div class="avatar-video-container">
             <video
                 id="mediaElement"
-                class="w-full border rounded-lg my-2"
+                class="w-full border rounded-lg"
                 autoplay
             ></video>
         </div>
-        <div class="container my-3">
-            <!-- Tab Menu -->
-            <ul class="nav nav-tabs" id="tabMenu" role="tablist">
-                <li class="nav-item">
-                    <a
-                        class="nav-link active"
-                        id="chat-tab"
-                        data-toggle="tab"
-                        href="#chat"
-                        role="tab"
-                        aria-controls="chat"
-                        aria-selected="true"
-                        >Chat</a
+
+        <div class="avatar-control-container">
+            <div class="tabs-container">
+                <!-- Tab Menu -->
+                <ul class="nav nav-tabs" id="tabMenu" role="tablist">
+                    <li class="nav-item">
+                        <a
+                            class="nav-link active"
+                            id="chat-tab"
+                            data-toggle="tab"
+                            href="#chat"
+                            role="tab"
+                            aria-controls="chat"
+                            aria-selected="true"
+                            >Chat</a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a
+                            class="nav-link"
+                            id="voz-tab"
+                            data-toggle="tab"
+                            href="#voz"
+                            role="tab"
+                            aria-controls="voz"
+                            aria-selected="false"
+                            >Voz</a
+                        >
+                    </li>
+                </ul>
+                <div class="tab-content" id="tabContent">
+                    <!-- Chat Tab -->
+                    <div
+                        class="tab-pane fade show active p-1"
+                        id="chat"
+                        role="tabpanel"
+                        aria-labelledby="chat-tab"
                     >
-                </li>
-                <li class="nav-item">
-                    <a
-                        class="nav-link"
-                        id="voz-tab"
-                        data-toggle="tab"
-                        href="#voz"
-                        role="tab"
-                        aria-controls="voz"
-                        aria-selected="false"
-                        >Voz</a
-                    >
-                </li>
-            </ul>
-            <div class="tab-content" id="tabContent">
-                <!-- Chat Tab -->
-                <div
-                    class="tab-pane fade show active p-3"
-                    id="chat"
-                    role="tabpanel"
-                    aria-labelledby="chat-tab"
-                >
-                    <div class="form-group">
-                        <label for="taskInput">Chat</label>
-                        <div class="input-group">
-                            <input
-                                id="taskInput"
-                                type="text"
-                                class="form-control"
-                                placeholder="Escribe un chat..."
-                            />
-                            <div class="input-group-append">
-                                <button id="talkBtn" class="avatar-button">
-                                    Enviar
-                                </button>
+                        <div class="form-group">
+                            <label for="taskInput">Chat</label>
+                            <div class="input-group">
+                                <input
+                                    id="taskInput"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Escribe un chat..."
+                                />
+                                <div class="input-group-append">
+                                    <button id="talkBtn" class="avatar-button">
+                                        Enviar
+                                    </button>
+                                </div>
                             </div>
                         </div>
+                        <div id="chatDisplay"></div>
                     </div>
-                    <div id="chatDisplay"></div>
-                </div>
-                <!-- Voz Tab -->
-                <div
-                    class="tab-pane fade p-3"
-                    id="voz"
-                    role="tabpanel"
-                    aria-labelledby="voz-tab"
-                >
-                    <!-- Bootstrap Alert -->
+                    <!-- Voz Tab -->
                     <div
-                        id="browser-alert"
-                        class="alert alert-danger mt-3"
-                        role="alert"
-                        style="display: none"
+                        class="tab-pane fade voice-tab"
+                        id="voz"
+                        role="tabpanel"
+                        aria-labelledby="voz-tab"
                     >
-                        Tu navegador no soporta la funcionalidad de grabación de
-                        audio. Por favor, utiliza CHROME.
+                        <!-- Bootstrap Alert -->
+                        <div
+                            id="browser-alert"
+                            class="alert alert-danger"
+                            role="alert"
+                            style="display: none"
+                        >
+                            Tu navegador no soporta la funcionalidad de
+                            grabación de audio. Por favor, utiliza CHROME.
+                        </div>
+                        <div
+                            class="avatar-button-container voice-btn-container"
+                        >
+                            <button id="start-btn" class="avatar-button">
+                                <span class="material-icons"> mic </span>
+                                <span>Grabar</span>
+                            </button>
+                        </div>
+                        <div class="avatar-input-container">
+                            <textarea
+                                id="transcript"
+                                class="form-control"
+                                rows="1"
+                                placeholder="La transcripción aparecerá aquí..."
+                                readonly
+                            ></textarea>
+                            <canvas id="waveform"></canvas>
+                        </div>
                     </div>
-                    <div class="avatar-button-container">
-                        <button id="start-btn" class="avatar-button">
-                            Iniciar voz
-                        </button>
-                        <button id="clear-btn" class="btn btn-danger">
-                            Limpiar transcripción
-                        </button>
-                        <button id="stop-btn" class="btn btn-success">
-                            Enviar
-                        </button>
-                    </div>
-                    <input
-                        id="transcript"
-                        class="form-control mt-3"
-                        placeholder="La transcripción aparecerá aquí..."
-                        readonly
-                        type="text"
-                    />
-
-                    <canvas id="waveform"></canvas>
                 </div>
             </div>
-        </div>
-        <div class="avatar-input-container">
-            <div>
-                <label for="avatarID"> Avatar Studio </label>
-                <select
-                    id="avatarID"
-                    class="form-control avatar-input"
-                ></select>
+            <div class="avatar-input-container">
+                <div>
+                    <label for="avatarID"> Avatar Studio </label>
+                    <select
+                        id="avatarID"
+                        class="form-control avatar-input"
+                    ></select>
+                </div>
+                <div>
+                    <label for="voiceID"> Voz del Avatar</label>
+                    <select
+                        id="voiceID"
+                        class="form-control avatar-input"
+                    ></select>
+                </div>
+                <div>
+                    <label for="kbID"> Base de conocimientos </label>
+                    <select
+                        id="kbID"
+                        class="form-control avatar-input"
+                    ></select>
+                </div>
+                <div>
+                    <label for="password"> Contraseña </label>
+                    <input
+                        id="password"
+                        class="form-control avatar-input"
+                        type="password"
+                    />
+                </div>
             </div>
-            <div>
-                <label for="voiceID"> Voz del Avatar</label>
-                <select id="voiceID" class="form-control avatar-input"></select>
+            <div class="avatar-button-container">
+                <button id="startBtn" class="avatar-button">
+                    Conectar Avatar
+                </button>
+                <button id="closeBtn" class="avatar-button">Cerrar</button>
             </div>
-            <div>
-                <label for="kbID"> Base de conocimientos </label>
-                <select id="kbID" class="form-control avatar-input"></select>
-            </div>
-            <div>
-                <label for="password"> Contraseña </label>
-                <input
-                    id="password"
-                    class="form-control avatar-input"
-                    type="password"
-                />
-            </div>
-        </div>
-        <div class="avatar-button-container">
-            <button id="startBtn" class="avatar-button">Conectar Avatar</button>
-            <button id="closeBtn" class="avatar-button">Cerrar</button>
         </div>
     </main>
     <!-- Your JavaScript file -->

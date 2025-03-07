@@ -1,12 +1,26 @@
-
-.main-avatar-container{
+/* Base Styles */
+.main-avatar-container {
     margin: 20px;
-    width: 80vw;
+    width: 98vw;
+    display: flex;
 }
 
-.avatar-input-container{
+.avatar-input-container {
     display: flex;
-    gap: 20px;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.avatar-video-container {
+    width: 100%;
+    aspect-ratio: 16/9;
+    height: 600px;
+}
+
+.avatar-control-container {
+    display: flex;
     justify-content: center;
     margin: 20px auto;
     flex-wrap: wrap;
@@ -16,22 +30,33 @@
 label {
     box-shadow: none;
     margin: 0;
-    padding: 0;	
+    padding: 0;
 }
 
-.avatar-input{
+.avatar-input {
     width: 200px;
 }
 
-.avatar-button-container{
+.avatar-button-container {
+    height: min-content;
+    margin: 0;
     display: flex;
-    gap: 20px;
-    justify-content: center;
-    width: 50%;
-    margin: 20px auto;
+    width: 100%;
+    gap: 10px;
+    padding: 0 10px;
 }
 
-.avatar-button{
+.voice-btn-container {
+    padding: 0;
+}
+
+.tabs-container {
+    width: 100%;
+    height: min-content;
+    padding: 10px;
+}
+
+.avatar-button {
     background: #27315d;
     color: white;
     padding: 10px 20px;
@@ -40,14 +65,13 @@ label {
     cursor: pointer;
 }
 
-.avatar-chat-container{
+.avatar-chat-container {
     display: flex;
     gap: 10px;
     width: 50%;
-    margin: 20px auto;
 }
 
-.avatar-chat-container button{
+.avatar-chat-container button {
     width: 100px;
 }
 
@@ -57,35 +81,93 @@ label {
     color: #6c757d;
     /* Dark gray text */
     cursor: not-allowed;
-    /* Change cursor to indicate it's not clickable */
     border: 1px solid #dcdcdc;
-    /* Light gray border */
     border-radius: 4px;
-    /* Rounded corners */
     padding: 8px 16px;
-    /* Padding */
     font-size: 16px;
-    /* Font size */
     pointer-events: none;
 }
 
 .disabled-button:hover {
     background-color: #dcdcdc;
-    /* Add a darker background on hover */
     color: #6c757d;
-    /* Change text color */
+}
+
+.tab-content {
+    height: min-content;
 }
 
 #waveform {
     width: 100%;
-    height: 100px;
+    height: 40px;
     background-color: #f5f5f5;
     border: 1px solid #ddd;
 }
 
 #transcript {
     width: 100%;
-    min-height: 80px;
-    margin-top: 10px;
+    height: 100px;
+    overflow-y: auto;
     resize: none;
+    line-height: 1.5em;
+}
+
+#voz {
+    width: 100%;
+    padding: 10px;
+}
+
+#start-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+/* Responsive Adjustments */
+
+/* Tablets and small desktops */
+@media (max-width: 768px) {
+    .main-avatar-container {
+        margin: 10px;
+        flex-wrap: wrap;
+    }
+    .avatar-video-container {
+        /* Let the video container adjust height automatically based on width */
+        height: auto;
+    }
+    .avatar-chat-container {
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+    }
+    .avatar-input {
+        width: 90%;
+        max-width: 300px;
+    }
+}
+
+/* Phones */
+@media (max-width: 480px) {
+    header nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+    header nav ul li {
+        margin-bottom: 5px;
+    }
+    .avatar-input-container,
+    .avatar-control-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .avatar-input {
+        width: 100%;
+        max-width: 300px;
+    }
+    .avatar-button-container {
+        flex-direction: column;
+        gap: 10px;
+        height: auto;
+    }
 }

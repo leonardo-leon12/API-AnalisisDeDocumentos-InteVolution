@@ -18,13 +18,14 @@ const startBtn = document.getElementById("startBtn");
 const closeBtn = document.getElementById("closeBtn");
 const talkBtn = document.getElementById("talkBtn");
 const startVoiceBtn = document.getElementById("start-btn");
-const stopVoiceBtn = document.getElementById("stop-btn");
 let context = [];
 
 // Event Listeners
 
 //Start on Click
 startBtn.addEventListener("click", async () => {
+    console.log("startBtn");
+
     //Add loading spinner
     startBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Cargando...`;
     startBtn.classList.add("disabled-button");
@@ -32,8 +33,7 @@ startBtn.addEventListener("click", async () => {
     await startStreamingSession();
     startBtn.innerHTML = "Conectar Avatar";
     startVoiceBtn.classList.remove("disabled-button");
-    stopVoiceBtn.classList.remove("disabled-button");
-    clearBtn.classList.remove("disabled-button");
+    talkBtn.classList.remove("disabled-button");
 });
 
 //Close on Click
@@ -42,8 +42,9 @@ closeBtn.addEventListener("click", closeSession);
 //Chat on Click
 talkBtn.addEventListener("click", () => {
     const text = taskInput.value.trim();
+    console.log("text", text);
     if (text) {
-        sendText(text, "talk");
+        sendText(text, "repeat");
         taskInput.value = "";
     }
 });
@@ -85,6 +86,7 @@ window.onload = function () {
 function loadSelects() {
     const avatarSelect = document.getElementById("avatarID");
     const voiceSelect = document.getElementById("voiceID");
+    let contextCopy = JSON.parse(JSON.stringify(context));
 
     avatarConfig.avatarList.forEach((avatar) => {
         const option = document.createElement("option");
@@ -100,12 +102,24 @@ function loadSelects() {
         voiceSelect.add(option);
     });
 
-    avatarConfig.KbList.forEach((kb) => {
+    avatarConfig.kbContext.forEach((kb) => {
         const option = document.createElement("option");
         option.text = kb.name;
-        option.value = kb.kbId;
+        option.value = kb.context;
         kbID.add(option);
     });
+
+    let systemMessage = {
+        role: "system",
+        content: [
+            {
+                type: "text",
+                text: kbID.value,
+            },
+        ],
+    };
+    contextCopy.push(systemMessage);
+    context = contextCopy;
 }
 
 // Get session token
@@ -131,7 +145,7 @@ async function connectWebSocket(sessionId) {
         session_id: sessionId,
         session_token: sessionToken,
         silence_response: false,
-        opening_text: "hola, ¿en qué puedo ayudarte?",
+        opening_text: "",
         stt_language: "es",
     });
 
@@ -147,7 +161,8 @@ async function connectWebSocket(sessionId) {
     });
 }
 
-async function handleOpenAIService(text, context) {
+async function handleOpenAIService(text) {
+    let contextCopy = JSON.parse(JSON.stringify(context));
     let contextObj = {
         role: "user",
         content: [
@@ -157,36 +172,49 @@ async function handleOpenAIService(text, context) {
             },
         ],
     };
+    contextCopy.push(contextObj);
 
-    let assistantResponseObj = {
+    let modelInstructions = {
+        messages: contextCopy,
+        temperature: 0.7,
+        top_p: 0.95,
+        max_tokens: 800,
+    };
+    console.log(
+        "modelInstructions",
+        JSON.stringify(modelInstructions, null, 2)
+    );
+
+    let config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: "https://agentia.openai.azure.com/openai/deployments/agentIA-GPT-4o/chat/completions?api-version=2024-02-15-preview",
+        headers: {
+            "api-key": "c759d2d3e5be45c691df9936e067e6c9",
+            "Content-Type": "application/json",
+        },
+        data: JSON.stringify(modelInstructions),
+    };
+
+    let openAIResponse = await axios(config);
+    console.log("openAIResponse", openAIResponse);
+
+    let openAIText = openAIResponse.data.choices[0].message.content;
+
+    contextObj = {
         role: "assistant",
         content: [
             {
                 type: "text",
-                text: "¡Hola! Soy Juan Valdez, cliente del Banco BBVA. ¿Cómo estás? ¿En qué puedo ayudarte hoy? 😊",
+                text: openAIText,
             },
         ],
     };
+    console.log("contextObj", contextObj);
+    contextCopy.push(contextObj);
 
-    context.push(contextObj);
-    let modelInstructions = JSON.stringify({
-        messages: [
-            {
-                role: "system",
-                content: [
-                    {
-                        type: "text",
-                        text: "**PERSONA:**  \n\nCada vez que respondas a la entrada del usuario, debes adoptar la siguiente personalidad:  \n\n____  \n\nJuan Valdez es un cliente del Banco BBVA. Su rol es interactuar de manera dinámica, asumiendo diferentes personalidades según la conversación: formal, directa, indiferente o amigable. Habla español neutro y siempre responde como cliente, no como agente o representante del banco.  \n\nSu número de cliente es 123, y solo proporcionará esta información al inicio de la sesión en caso de que el banco no la haya solicitado como tercera interacción.  \n____  \n\n**BASE DE CONOCIMIENTO:**  \n\nCada vez que respondas a la entrada del usuario, proporciona respuestas basadas en el conocimiento siguiente.  \nSiempre prioriza esta información al responder a los usuarios:  \n\nJuan Valdez interactúa exclusivamente como cliente del Banco BBVA, formulando preguntas solo sobre temas bancarios y basando sus respuestas en la información que un cliente típico tendría. Siempre responde desde la perspectiva de un cliente o prospecto. Puede generar preguntas comunes que un cliente podría tener dentro de un contexto bancario.  \n\nNo debe discutir temas no relacionados con la banca, escalar conversaciones ni recopilar datos personales de los usuarios.  \n\n**INSTRUCCIONES:**  \n\nDebes seguir las siguientes instrucciones al responder a los usuarios:  \n\n- **Tono Adaptativo:** Juan ajusta su personalidad según la interacción (formal, directa, indiferente o amigable).  \n- **Idioma:** Se comunica exclusivamente en español neutro.  \n- **Flujo de Conversación:** Juan nunca iniciará una conversación antes de que alguien diga algo primero. Genera preguntas y dudas siempre como si fuera un cliente bancario.  \n- **Identificación del Cliente:** Solo al inicio de la sesión, en caso de que el agente no le haya solicitado su nombre, Juan Valdez y su número de cliente (123456), deberá mencionarlo y preguntar por qué no se ha solicitado esta información, pero solo en caso de que no se haya pedido al principio sin mencionarlo.  \n- **Límites:** No debe actuar como representante del banco, proporcionar información oficial ni responder preguntas no relacionadas con la banca.",
-                    },
-                ],
-            },
-            context,
-        ],
-
-        temperature: 0.7,
-        top_p: 0.95,
-        max_tokens: 800,
-    });
+    context = contextCopy;
+    return openAIText;
 }
 
 // Create new session
@@ -203,11 +231,11 @@ async function createNewSession() {
         },
         body: JSON.stringify({
             quality: "high", //"medium"
-            knowledge_base_id: kbID.value,
+            knowledge_base_id: "",
             avatar_id: avatarID.value,
             voice: {
                 voice_id: voiceID.value,
-                rate: 1,
+                rate: 1.0,
                 emotion: "Friendly", //Excited, Serious, Friendly, Soothing, Broadcaster
             },
             version: "v2",
@@ -282,17 +310,15 @@ async function startStreamingSession() {
 
     // Connect to LiveKit room
     await room.connect(sessionInfo.url, sessionInfo.access_token);
-
-    document.querySelector("#startBtn").disabled = true;
 }
 
 // Send text to avatar
-async function sendText(text, taskType = "talk") {
+async function sendText(text, taskType = "repeat") {
     if (!sessionInfo) {
         return;
     }
 
-    //let openAIResponse = await handleOpenAIService(text, context);
+    let openAIResponse = await handleOpenAIService(text, context);
 
     const response = await fetch(
         `${avatarConfig.serverUrl}/v1/streaming.task`,
@@ -304,7 +330,7 @@ async function sendText(text, taskType = "talk") {
             },
             body: JSON.stringify({
                 session_id: sessionInfo.session_id,
-                text: text,
+                text: openAIResponse,
                 task_type: taskType,
             }),
         }
@@ -362,20 +388,12 @@ let recognitionActive = false;
 const canvas = document.getElementById("waveform");
 const canvasCtx = canvas.getContext("2d");
 const transcriptElement = document.getElementById("transcript");
-const clearBtn = document.getElementById("clear-btn");
 let recognition;
 
 if (!sessionInfo) {
     startVoiceBtn.classList.add("disabled-button");
-    stopVoiceBtn.classList.add("disabled-button");
-    clearBtn.classList.add("disabled-button");
+    talkBtn.classList.add("disabled-button");
 }
-
-// Clear the transcript
-clearBtn.addEventListener("click", () => {
-    finalTranscript = "";
-    transcriptElement.value = "";
-});
 
 // Setup Speech Recognition API
 try {
@@ -410,39 +428,31 @@ try {
         recognitionActive = false;
     };
 } catch (error) {
-    // If SpeechRecognition is not supported, disable buttons and show the alert
-    document.getElementById("start-btn").disabled = true;
-    document.getElementById("stop-btn").disabled = true;
     document.getElementById("browser-alert").style.display = "block";
 }
 
-// Start voice recognition and visualization
+// Start/Stop voice recognition and visualization
 document.getElementById("start-btn").addEventListener("click", async () => {
+    console.log("click start");
+
     if (!recognitionActive) {
         finalTranscript = "";
         transcriptElement.value = "";
         recognition.start();
         recognitionActive = true;
-    }
-    document.getElementById("start-btn").disabled = true;
-    document.getElementById("stop-btn").disabled = false;
-    await startVisualizer();
-});
-
-// Stop voice recognition and visualization
-document.getElementById("stop-btn").addEventListener("click", () => {
-    if (recognitionActive) {
+        document.getElementById("start-btn").innerText = "Detener Voz";
+        await startVisualizer();
+    } else {
         recognition.stop();
         recognitionActive = false;
-    }
-    document.getElementById("start-btn").disabled = false;
-    document.getElementById("stop-btn").disabled = true;
-    stopVisualizer();
+        document.getElementById("start-btn").innerText = "Iniciar Voz";
+        stopVisualizer();
 
-    // Send the final transcript to the avatar
-    sendText(transcriptElement.value, "talk");
-    finalTranscript = "";
-    transcriptElement.value = "";
+        // Send the final transcript to the avatar
+        sendText(transcriptElement.value, "repeat");
+        finalTranscript = "";
+        transcriptElement.value = "";
+    }
 });
 
 // Start the audio visualizer (access microphone, connect analyser, and draw waveform)
@@ -475,27 +485,35 @@ function stopVisualizer() {
     canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-// Draw the waveform on the canvas
 function drawWaveform() {
+    // Call this function continuously so the waveform animates in real-time
     animationId = requestAnimationFrame(drawWaveform);
+
+    // Get the latest time-domain audio data
     analyser.getByteTimeDomainData(dataArray);
-    canvasCtx.fillStyle = "#f5f5f5";
+
+    // Clear the canvas
+    canvasCtx.fillStyle = "#f5f5f5"; // background color
     canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-    canvasCtx.lineWidth = 2;
-    canvasCtx.strokeStyle = "#007bff";
-    canvasCtx.beginPath();
-    const sliceWidth = canvas.width / bufferLength;
+
+    // You can play with barWidth to match the desired style
+    const barWidth = (canvas.width / bufferLength) * 2;
     let x = 0;
+
     for (let i = 0; i < bufferLength; i++) {
-        const v = dataArray[i] / 128.0;
-        const y = (v * canvas.height) / 2;
-        if (i === 0) {
-            canvasCtx.moveTo(x, y);
-        } else {
-            canvasCtx.lineTo(x, y);
-        }
-        x += sliceWidth;
+        // Convert the data from [0..255] range to roughly [-1..1]
+        const v = (dataArray[i] - 128) / 128.0;
+        // Height of each bar is based on absolute amplitude
+        const barHeight = Math.abs(v) * (canvas.height / 2);
+
+        // Center each bar around the canvas midline
+        const y = canvas.height / 2 - barHeight;
+
+        // Draw the bar
+        canvasCtx.fillStyle = "#007bff"; // waveform color
+        canvasCtx.fillRect(x, y, barWidth, barHeight * 2);
+
+        // Add some spacing between bars (increase or decrease to taste)
+        x += barWidth + 1;
     }
-    canvasCtx.lineTo(canvas.width, canvas.height / 2);
-    canvasCtx.stroke();
 }
