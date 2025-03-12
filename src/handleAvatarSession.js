@@ -188,9 +188,10 @@ async function handleOpenAIService(text) {
     let config = {
         method: "post",
         maxBodyLength: Infinity,
-        url: "https://agentia.openai.azure.com/openai/deployments/agentIA-GPT-4o/chat/completions?api-version=2024-02-15-preview",
+        url: "https://agentia-testing-openai.openai.azure.com/openai/deployments/agentIA-GPT-4o-mini-2/chat/completions?api-version=2024-02-15-preview",
         headers: {
-            "api-key": "c759d2d3e5be45c691df9936e067e6c9",
+            "api-key":
+                "DwatKr4gbYnoYvaZgH7ZXyQr9oidLzkxbqcsOZpdBe7qynUxf2CqJQQJ99BCACHYHv6XJ3w3AAABACOGvtVz",
             "Content-Type": "application/json",
         },
         data: JSON.stringify(modelInstructions),
