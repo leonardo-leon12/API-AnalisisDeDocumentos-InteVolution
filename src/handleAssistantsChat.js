@@ -25,7 +25,7 @@ Una vez que tengas estos datos calculados, dame los resultados segmentados por l
 4. Por categoría  
 En la tabla me muestras los indicadores de: total de ventas, total de costos, total de utilidad y el porcentaje de utilidad respecto al total de ventas. Toma en cuenta las relaciones que se te proporcionan en las instrucciones.`,
         ],
-        link: "https://intevolutionassista998a.blob.core.windows.net/demo-files/Curso DAX SEG (1).xlsx",
+        link: "https://intevolutionassista859e.blob.core.windows.net/demo-files/Curso DAX SEG (1)(1).xlsx",
         description:
             "Datos de una empresa de retail para analizar ventas, clientes e ingresos.",
     },
