@@ -65,11 +65,24 @@
                             class="d-flex flex-row justify-content-between w-100"
                         >
                             <div class="w-50">
-                                <span>Origen de datos:</span>
-                                <select
-                                    id="dataSources"
-                                    name="dataSources"
-                                ></select>
+                                <div
+                                    class="d-flex flex-column justify-content-center"
+                                >
+                                    <span>Origen de datos:</span>
+                                    <select
+                                        id="dataSources"
+                                        name="dataSources"
+                                    ></select>
+                                    <div
+                                        class="spinner-border text-primary"
+                                        role="status"
+                                        id="loadingDataSources"
+                                        style="display: none"
+                                    >
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+
                                 <button class="copyButton" id="downloadButton">
                                     Descagar ejemplo
                                 </button>
@@ -139,12 +152,14 @@
                                 width: 100%;
                                 min-height: 500px;
                             "
+                            id="webchatIframe"
                         ></iframe>
                     </div>
                 </div>
             </div>
         </main>
         <!-- Your JavaScript file -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="/src/handleAssistantsChat.js"></script>
         <!-- jQuery (required by Bootstrap 4) -->
         <script
