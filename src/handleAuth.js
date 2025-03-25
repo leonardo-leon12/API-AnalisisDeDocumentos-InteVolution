@@ -17,8 +17,6 @@ function getProfileParams() {
         return null;
     }
     return {
-        email: params.get("email"),
-        name: params.get("name"),
         access_token: params.get("access_token"),
         refresh_token: params.get("refresh_token"),
         expires_in: params.get("expires_in"),
