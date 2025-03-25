@@ -171,6 +171,8 @@ nav ul {
     display: flex;
     padding: 0;
     margin-bottom: 0 !important;
+    justify-content: center;
+    align-items: center;
 }
 
 nav ul li {
@@ -268,4 +270,9 @@ nav ul li {
 
 .logo-nav {
     width: 15%;
+}
+
+#logout {
+    margin: 0;
+    margin-left: auto !important;
 }
